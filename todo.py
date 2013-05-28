@@ -9,8 +9,8 @@ class TODO(Linter):
     def can_lint(cls, language):
         return True
 
-    def lint(self, code):
-        lines = code.split('\n')
+    def lint(self):
+        lines = self.code.split('\n')
         for i in range(len(lines)):
             if 'TODO' in lines[i]:
                 todo = lines[i].index('TODO')
