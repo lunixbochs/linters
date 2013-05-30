@@ -2,7 +2,7 @@ from lint import Linter
 
 class PHP(Linter):
     language = ('php', 'html')
-    cmd = ('php', '-l', '-d display_errors=On')
+    cmd = ('php', '-l', '-n', '-d display_errors=On')
     regex = r'^Parse error:\s*(?P<type>parse|syntax) error,?\s*(?P<error>.+?)?\s+in\s+.+?\s*line\s+(?P<line>\d+)'
 
     def match_error(self, r, line):
