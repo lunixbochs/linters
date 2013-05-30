@@ -3,7 +3,7 @@ linters
 
 This repository is a child of [Sublime Lint](http://github.com/lunixbochs/sublimelint "Sublime Lint") and will be automatically installed.
 
-NOTE: You may to install the mentioned binaries and place them within your `PATH` for some linters to work.
+NOTE: You may need to install the mentioned binaries and place them within your `PATH` for some linters to work.
 
 Languages:
 
