@@ -17,6 +17,7 @@ class CustomCodec(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 def lint(code):
+    code = code.decode('utf8')
     linter = NSAppleScript.alloc().initWithSource_(code)
     errors = dict(linter.compileAndReturnError_(None)[1] or {})
     objc.recycleAutoreleasePool()
