@@ -28,7 +28,7 @@ if __name__ == '__main__':
     print lint(code)
 '''
 
-class TODO(Linter):
+class AppleScript(Linter):
     @classmethod
     def can_lint(cls, language):
         if platform.system() != 'Darwin':
