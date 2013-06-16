@@ -7,6 +7,7 @@ NOTE: You may need to install the mentioned binaries and place them within your 
 
 Languages:
 
+* AppleScript - NSAppleScript via PyObjC
 * C - validation via `clang`
 * C++ - validation via `clang++`
 * CSS - linting via `csslint`
