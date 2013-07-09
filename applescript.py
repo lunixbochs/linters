@@ -1,8 +1,22 @@
 from lint import Linter
 import json
 import platform
+import subprocess
 
-script = '''
+
+def clean_output(args):
+    return '\n'.join([a.decode('utf8') for a in args if a])
+
+
+def popen(*cmd):
+    p = subprocess.Popen(cmd,
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return clean_output(p.communicate())
+
+
+lint_script = '''
 import sys
 from Foundation import NSAppleScript, NSConcreteValue, NSRange
 import objc
@@ -28,6 +42,29 @@ if __name__ == '__main__':
     print lint(code)
 '''
 
+
+find_app_script = '''
+import LaunchServices
+import sys
+code, ref, url = LaunchServices.LSFindApplicationForInfo(
+    LaunchServices.kLSUnknownCreator, None, sys.argv[1], None, None)
+if url:
+    sys.stdout.write(url.path().encode('utf8'))
+'''
+
+
+app_name_cache = {}
+def find_app(name):
+    if not name.endswith('.app'):
+        name += '.app'
+    if not name in app_name_cache:
+        app = popen('/usr/bin/python', '-c', find_app_script, name)
+        app_name_cache[name] = app
+    return app_name_cache[name]
+
+APP_NAME_SEL = 'string.quoted.double.application-name.applescript'
+
+
 class AppleScript(Linter):
     @classmethod
     def can_lint(cls, language):
@@ -36,7 +73,30 @@ class AppleScript(Linter):
         return 'AppleScript' in language
 
     def lint(self):
-        out = self.communicate(('/usr/bin/python', '-c', script), self.code)
+        tell_apps = [
+            (region, self.view.substr(region).strip('"'))
+            for region in self.view.find_by_selector(APP_NAME_SEL)
+        ]
+        any_invalid = False
+        for region, name in tell_apps:
+            if not find_app(name):
+                any_invalid = True
+                start = region.a + 1
+                end = region.b - start - 1
+                line = self.code[:start].count('\n')
+                line_len = len(self.code.split('\n')[line])
+                offset = 0
+                if line:
+                    start -= self.code[:start].rindex('\n') + 1
+
+                end = min(line_len - start, end)
+                self.highlight.range(line, start, end)
+                self.error(line, 'Could not find app named {}'.format(name))
+
+        if any_invalid:
+            return
+
+        out = self.communicate(('/usr/bin/python', '-c', lint_script), self.code)
         out = out.replace('\u2019', '\'')
         error = json.loads(out)
         if error:
