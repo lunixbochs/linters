@@ -7,6 +7,9 @@ def find_includes(filename):
     includes = []
     if filename:
         parent = os.path.dirname(filename)
+        if not parent:
+            return includes
+
         includes.append('-I' + parent)
         inc = find(parent, 'include')
         if inc:
