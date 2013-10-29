@@ -1,7 +1,7 @@
 import os
 
 from lint import Linter
-from lint.util import find
+from sublimelint.lint.util import find
 
 def find_includes(filename):
     includes = []
