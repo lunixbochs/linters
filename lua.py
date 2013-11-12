@@ -1,7 +1,7 @@
 from lint import Linter
 
 class Lua(Linter):
-    language = 'lua'
+    language = ('coronasdklua', 'lua')
     cmd = ('luac', '-p')
     regex = '^luac: [^:]+:(?P<line>\d+): (?P<error>.+?)(?P<near> near .+)?'
 
