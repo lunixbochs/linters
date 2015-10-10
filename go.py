@@ -21,7 +21,7 @@ class Golang(Linter):
         path = os.path.split(self.filename)[0]
         if not self.filename or not path:
             tools = self.popen(('go', 'tool')).communicate()[0].decode('utf8').split('\n')
-            for compiler in ('6g', '8g'):
+            for compiler in ('compile', '6g', '8g'):
                 if compiler in tools:
                     return self.tmpfile(('go', 'tool', compiler, '-e', '-o', os.devnull), code, suffix='.go')
         else:
